@@ -28,9 +28,12 @@ public class JoinLeaveListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent e) {
         Island island = addon.getIslands().getIsland(addon.getOverWorld(), e.getPlayer().getUniqueId());
         if (island != null) {
+            addon.getPlugin().logDebug(e.getPlayer().getName() + " logged off.");
             addon.getBlockListener().saveIsland(island).thenAccept(r -> {
                 if (!r) {
                     addon.logError("Could not save AOneBlock island at " + Util.xyz(island.getCenter().toVector()) + " to database " + island.getUniqueId());
+                } else {
+                    addon.getPlugin().logDebug("Saved island for " + e.getPlayer().getName());
                 }
             });
         }

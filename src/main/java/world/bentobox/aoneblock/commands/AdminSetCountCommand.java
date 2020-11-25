@@ -63,6 +63,7 @@ public class AdminSetCountCommand extends CompositeCommand {
         OneBlockIslands i = addon.getOneBlocksIsland(island);
         i.setBlockNumber(count);
         user.sendMessage("aoneblock.commands.admin.setcount.set", TextVariables.NUMBER, String.valueOf(i.getBlockNumber()), TextVariables.NAME, getPlayers().getName(targetUUID));
+        addon.getPlugin().logDebug("Admin block count set to " + count + " for " + getPlayers().getName(targetUUID));
         return true;
     }
 

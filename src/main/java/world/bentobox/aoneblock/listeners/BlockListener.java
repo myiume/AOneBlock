@@ -215,7 +215,7 @@ public class BlockListener implements Listener {
 
     private void process(Cancellable e, Island i, @Nullable Player player, @NonNull World world) {
         // Get island from cache or load it
-        OneBlockIslands is = getIsland(i);
+        OneBlockIslands is = getIsland(i, player);
         // Get the phase for this island
         OneBlockPhase phase = oneBlocksManager.getPhase(is.getBlockNumber());
         // Store the original phase in case it changes.
@@ -413,11 +413,16 @@ public class BlockListener implements Listener {
     /**
      * Get the one block island data
      * @param i - island
+     * @param player - player related to the get
      * @return one block island
      */
     @NonNull
-    public OneBlockIslands getIsland(Island i) {
-        return cache.containsKey(i.getUniqueId()) ? cache.get(i.getUniqueId()) : loadIsland(i.getUniqueId());
+    public OneBlockIslands getIsland(Island i, @Nullable Player player) {
+        return cache.containsKey(i.getUniqueId()) ? cache.get(i.getUniqueId()) : loadIsland(i.getUniqueId(), player);
+    }
+    public @NonNull OneBlockIslands getIsland(Island i) {
+        return getIsland(i, null);
+
     }
 
     private void damageTool(@NonNull Player player, Block block) {
@@ -452,15 +457,23 @@ public class BlockListener implements Listener {
     }
 
     @NonNull
-    private OneBlockIslands loadIsland(String uniqueId) {
+    private OneBlockIslands loadIsland(String uniqueId, @Nullable Player player) {
         if (handler.objectExists(uniqueId)) {
             OneBlockIslands island = handler.loadObject(uniqueId);
             if (island != null) {
                 // Add to cache
                 cache.put(island.getUniqueId(), island);
+                if (player != null) {
+                    addon.getPlugin().logDebug("Loaded island data for player " + player.getName());
+                } else {
+                    addon.getPlugin().logDebug("Loaded island data");
+                }
+                addon.getPlugin().logDebug(island.toString());
+
                 return island;
             }
         }
+        addon.getPlugin().logDebug("New island data for player " + player.getName());
         return cache.computeIfAbsent(uniqueId, OneBlockIslands::new);
     }
 
@@ -478,9 +491,13 @@ public class BlockListener implements Listener {
      */
     public CompletableFuture<Boolean> saveIsland(Island island) {
         if (cache.containsKey(island.getUniqueId())) {
+            addon.getPlugin().logDebug("Saving island data: " + cache.get(island.getUniqueId()));
+
             return handler.saveObjectAsync(cache.get(island.getUniqueId()));
         }
+        addon.getPlugin().logDebug("Island not in cache, not saving " + island.getUniqueId());
         return CompletableFuture.completedFuture(true);
     }
+
 
 }

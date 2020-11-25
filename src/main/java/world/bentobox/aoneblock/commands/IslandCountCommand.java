@@ -44,6 +44,7 @@ public class IslandCountCommand extends CompositeCommand {
         getIslands().getProtectedIslandAt(user.getLocation()).ifPresent(island -> {
             OneBlockIslands i = addon.getOneBlocksIsland(island);
             user.sendMessage("aoneblock.commands.count.info", TextVariables.NUMBER, String.valueOf(i.getBlockNumber()), TextVariables.NAME, i.getPhaseName());
+            addon.getPlugin().logDebug(user.getName() + ": " + i.getBlockNumber() + " " + i.getPhaseName());
         });
         return true;
     }

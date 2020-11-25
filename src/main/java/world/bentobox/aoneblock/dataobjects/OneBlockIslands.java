@@ -139,5 +139,12 @@ public class OneBlockIslands implements DataObject {
         this.lifetime = loops;
     }
 
+    @Override
+    public String toString() {
+        return "OneBlockIslands [" + (uniqueId != null ? "uniqueId=" + uniqueId + ", " : "") + "blockNumber="
+                + blockNumber + ", lifetime=" + lifetime + ", " + (phaseName != null ? "phaseName=" + phaseName : "")
+                + "]";
+    }
+
 
 }
